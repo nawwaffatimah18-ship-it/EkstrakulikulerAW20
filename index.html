@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Ekstrakurikuler & Absensi • Al-Wildan Islamic School 20 Mataram</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#1E3A5F', accent: '#3B82F6' },
+                    fontFamily: { heading: ['"Plus Jakarta Sans"', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; overflow-x: hidden; }
+        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .card-custom { border-radius: 24px; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        .card-custom:hover { transform: translateY(-6px); box-shadow: 0 25px 35px -5px rgba(30, 58, 95, 0.12); }
+        
+        .reveal-element {
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(24px) scale(0.98);
+            transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 600ms cubic-bezier(0.16, 1, 0.3, 1), 
+                        filter 600ms cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform, filter;
+        }
+        .reveal-element.active {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0) scale(1);
+        }
+
+        .nav-link {
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.4);
+            transition: text-shadow 0.3s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9), 0 0 3px rgba(255, 255, 255, 0.6);
+            transform: translateY(-1px);
+        }
+
+        #page-transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 58, 95, 0.96);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.03) translateY(8px);
+            transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 400ms cubic-bezier(0.16, 1, 0.3, 1), 
+                        visibility 400ms;
+            pointer-events: none;
+        }
+        #page-transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        .floating-controls {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .float-btn-3d {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .float-btn-3d:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px -3px rgba(0, 0, 0, 0.35);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+
+    <div id="page-transition-overlay"></div>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-primary text-white sticky top-0 z-50 shadow-lg backdrop-blur-md bg-primary/95">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
+            <div class="flex items-center space-x-4 cursor-pointer group" onclick="switchTab('home', event)">
+                <div class="w-12 h-12 rounded-full bg-white p-0.5 overflow-hidden flex items-center justify-center shadow-md transition-transform duration-500 group-hover:scale-110">
+                    <img src="logo AW 20.jpg" alt="Logo Al-Wildan 20 Mataram" class="w-full h-full object-cover rounded-full">
+                </div>
+                <div>
+                    <h1 class="font-heading font-extrabold text-sm sm:text-base tracking-tight">AL-WILDAN ISLAMIC SCHOOL 20 MATARAM</h1>
+                    <p class="text-xs text-slate-300 font-medium">Portal Pendaftaran & Absensi Ekstrakurikuler</p>
+                </div>
+            </div>
+            
+            <nav id="navbar-container" class="hidden md:flex items-center space-x-8 text-sm font-semibold tracking-wider uppercase relative h-full">
+                <a href="#home" id="nav-home" onclick="switchTab('home', event); return false;" class="nav-link text-white py-4 transition duration-300 flex items-center h-full"><span class="menu-text">Home</span></a>
+                <a href="#pendaftaran" id="nav-pendaftaran" onclick="switchTab('pendaftaran', event); return false;" class="nav-link text-slate-300 hover:text-white py-4 transition duration-300 flex items-center h-full"><span class="menu-text">Pendaftaran</span></a>
+                <a href="#absensi" id="nav-absensi" onclick="switchTab('absensi', event); return false;" class="nav-link text-slate-300 hover:text-white py-4 transition duration-300 flex items-center h-full"><span class="menu-text">Absensi Guru</span></a>
+                <a href="#katalog-ekskul" id="nav-katalog" onclick="switchTab('katalog-ekskul', event); return false;" class="nav-link text-slate-300 hover:text-white py-4 transition duration-300 flex items-center h-full"><span class="menu-text">Katalog</span></a>
+            </nav>
+
+            <span class="hidden sm:flex text-xs font-semibold text-white px-4 py-2 bg-white/10 rounded-xl border border-white/25 items-center space-x-2 shadow-inner">
+                <i data-lucide="shield-check" class="w-4 h-4 text-sky-300"></i>
+                <span>Portal Resmi</span>
+            </span>
+        </div>
+    </header>
+
+    <!-- KONTEN UTAMA -->
+    <main class="flex-grow space-y-24 mb-24">
+        
+        <!-- SECTION / TAB HOME -->
+        <section id="content-home" class="tab-content space-y-20">
+            <div class="bg-gradient-to-r from-primary via-blue-900 to-slate-900 text-white py-20 px-6 relative overflow-hidden shadow-xl">
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px]"></div>
+                <div class="max-w-5xl mx-auto text-center space-y-6 relative z-10 reveal-element" style="transition-delay: 0ms;">
+                    <div class="flex justify-center mb-4">
+                        <img src="logo AW 20.jpg" alt="Logo Al-Wildan 20 Mataram" class="w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white/20 shadow-2xl object-cover">
+                    </div>
+                    <div>
+                        <span class="px-4 py-2 bg-white/10 text-sky-300 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase border border-white/15">Pengembangan Bakat & Minat Siswa</span>
+                    </div>
+                    <h2 class="font-heading font-extrabold text-4xl sm:text-6xl tracking-tight leading-tight">Pusat Ekstrakurikuler & Absensi</h2>
+                    <p class="text-base sm:text-lg text-slate-200 max-w-3xl mx-auto leading-relaxed">
+                        Salurkan potensi terbaik ananda dan mudahkan rekapitulasi kehadiran kegiatan pembinaan di Al-Wildan Islamic School 20 Mataram.
+                    </p>
+                    <div class="pt-6 flex flex-wrap justify-center gap-4">
+                        <button onclick="switchTab('pendaftaran', event)" class="px-8 py-4 bg-sky-500 hover:bg-sky-600 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-2xl transition flex items-center space-x-2 shadow-lg">
+                            <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            <span>Form Pendaftaran</span>
+                        </button>
+                        <button onclick="switchTab('absensi', event)" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-2xl transition flex items-center space-x-2 shadow-lg">
+                            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                            <span>Absensi Guru</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TENTANG EKSTRAKURIKULER -->
+            <div class="w-full px-6 sm:px-12 lg:px-20">
+                <div class="bg-white card-custom p-8 sm:p-14 border border-slate-100 space-y-6 reveal-element w-full">
+                    <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-primary">Tentang Ekstrakurikuler</h3>
+                    <div class="space-y-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+                        <p>Ekstrakurikuler merupakan salah satu bagian penting dalam proses pendidikan siswa. Kegiatan ini tidak hanya bertujuan untuk mengisi waktu di luar pembelajaran akademik, tetapi menjadi wadah bagi siswa untuk menemukan, mengembangkan, dan mengasah bakat serta minat yang mereka miliki.</p>
+                        <p>Setiap siswa memiliki keunikan dan potensi yang berbeda. Ada siswa yang memiliki kemampuan dalam bidang bahasa, olahraga, seni, teknologi, akademik, maupun keterampilan lainnya. Melalui kegiatan ekstrakurikuler, siswa diberikan kesempatan untuk mengeksplorasi kemampuan tersebut dalam suasana yang lebih aktif, menyenangkan, dan sesuai dengan minat mereka.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EKSTRAKURIKULER YANG AKTIF -->
+            <div class="max-w-6xl mx-auto px-6 space-y-8">
+                <div class="text-center space-y-3 reveal-element">
+                    <span class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold tracking-wider uppercase">Daftar Kegiatan</span>
+                    <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-primary">Ekstrakurikuler yang Aktif</h3>
+                    <p class="text-sm sm:text-base text-slate-500">Berikut adalah daftar pilihan ekstrakurikuler yang aktif dan tersedia pada periode tahun ajaran ini.</p>
+                </div>
+
+                <div id="homeActiveList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- SECTION / TAB FORM PENDAFTARAN -->
+        <section id="content-pendaftaran" class="tab-content w-full px-6 sm:px-12 lg:px-20 scroll-mt-28 hidden">
+            <div class="bg-white card-custom p-8 sm:p-14 border border-slate-100 space-y-8 reveal-element w-full">
+                <div class="text-center space-y-3 max-w-2xl mx-auto">
+                    <span class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-xs font-bold tracking-wider uppercase">Formulir Online</span>
+                    <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-primary">Pendaftaran Kegiatan</h3>
+                    <p class="text-sm sm:text-base text-slate-500">Pilih periode, pilih lebih dari 1 kegiatan, dan unggah bukti pembayaran Anda.</p>
+                    
+                    <div id="statusBanner" class="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm font-bold flex items-center justify-center space-x-2">
+                        <i data-lucide="lock" class="w-5 h-5"></i>
+                        <span id="statusText">Pendaftaran Sedang Ditutup (Periode Belum Dibuka)</span>
+                    </div>
+                </div>
+
+                <form id="exkulForm" onsubmit="handleSubmit(event)" class="space-y-6 text-sm max-w-4xl mx-auto">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-2">Pilih Periode Pendaftaran</label>
+                        <select id="periode" required disabled class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-100 font-medium cursor-not-allowed">
+                            <option value="">-- Pilih Periode --</option>
+                            <option value="Periode 1">Periode 1</option>
+                            <option value="Periode 2">Periode 2</option>
+                            <option value="Periode 3">Periode 3</option>
+                            <option value="Periode 4">Periode 4</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-2">Nama Lengkap Siswa</label>
+                            <input type="text" id="nama" placeholder="Masukkan nama lengkap" required disabled class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-100 cursor-not-allowed">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-2">Kelas</label>
+                            <input type="text" id="kelas" placeholder="Contoh: 12 DI 1" required disabled class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-100 cursor-not-allowed">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-2">Pilihan Ekstrakurikuler / Mapel (Bisa pilih lebih dari 1)</label>
+                        <div id="ekskulCheckboxContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-slate-100 border border-slate-200 rounded-2xl max-h-56 overflow-y-auto pointer-events-none opacity-60">
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Ashabul Qur'an" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Ashabul Qur'an</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Arabic" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Arabic</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="English" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>English</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Math" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Math</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Research and Sains" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Research and Sains</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Futsal" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Futsal</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Robotic" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Robotic</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Taekwondo" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Taekwondo</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Badminton" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Badminton</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Basket" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Basket</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Merajut" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Merajut</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Archery" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Archery</span></label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-1.5 rounded"><input type="checkbox" name="ekskul" value="Multimedia" class="rounded text-blue-600 focus:ring-blue-500 w-5 h-5" disabled><span>Multimedia</span></label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-2">Nomor WhatsApp Siswa / Orang Tua</label>
+                            <input type="text" id="whatsapp" placeholder="Contoh: 081234567890" required disabled class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-100 cursor-not-allowed">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-2">Upload Bukti Pembayaran (Foto/PDF)</label>
+                            <input type="file" id="buktiBayar" accept="image/*,application/pdf" required disabled class="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-100 text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-600 cursor-not-allowed">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" disabled class="w-full py-4 bg-slate-300 text-slate-500 font-bold uppercase tracking-wider rounded-2xl transition cursor-not-allowed shadow-none text-base">
+                        Pendaftaran Ditutup
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION / TAB ABSENSI GURU -->
+        <section id="content-absensi" class="tab-content w-full px-6 sm:px-12 lg:px-20 scroll-mt-28 hidden">
+            <div class="bg-white card-custom p-8 sm:p-14 border border-slate-100 space-y-8 reveal-element w-full max-w-4xl mx-auto">
+                <div class="text-center space-y-3">
+                    <span class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold tracking-wider uppercase">Menu Pengajar</span>
+                    <h3 class="font-heading font-extrabold text-3xl sm:text-4xl text-primary">Form Absensi Ekstrakurikuler</h3>
+                    <p class="text-sm sm:text-base text-slate-500">Pilih mata pelajaran dan nama guru pengampu untuk memunculkan daftar siswa secara otomatis.</p>
+                </div>
+
+                <form id="absensiForm" onsubmit="handleAbsensiSubmit(event)" class="space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-2">Pilih Mata Pelajaran / Ekskul</label>
+                            <select id="absenMapel" required onchange="onMapelChange()" class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition bg-white font-medium">
+                                <option value="">-- Pilih Mapel / Ekskul --</option>
+                                <option value="Ashabul Qur'an">Ashabul Qur'an</option>
+                                <option value="Arabic">Arabic</option>
+                                <option value="English">English</option>
+                                <option value="Math">Math</option>
+                                <option value="Research and Sains">Research and Sains</option>
+                                <option value="Futsal">Futsal</option>
+                                <option value="Robotic">Robotic</option>
+                                <option value="Taekwondo">Taekwondo</option>
+                                <option value="Badminton">Badminton</option>
+                                <option value="Basket">Basket</option>
+                                <option value="Merajut">Merajut</option>
+                                <option value="Archery">Archery</option>
+                                <option value="Multimedia">Multimedia</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-2">Nama Guru Pengampu</label>
+                            <select id="absenNamaGuru" required onchange="onMapelOrGuruChange()" class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition bg-white font-medium">
+                                <option value="">-- Pilih Guru Pengampu --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-2">Pertemuan Ke-</label>
+                        <select id="absenPertemuan" required class="w-full px-4 py-3.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition bg-white font-medium">
+                            <option value="">-- Pilih Pertemuan --</option>
+                            <option value="1">Pertemuan 1</option>
+                            <option value="2">Pertemuan 2</option>
+                            <option value="3">Pertemuan 3</option>
+                            <option value="4">Pertemuan 4</option>
+                        </select>
+                    </div>
+
+                    <!-- Kontainer Daftar Siswa & Presensi Otomatis -->
+                    <div id="containerDaftarSiswa" class="space-y-4 hidden border-t border-slate-100 pt-6">
+                        <h4 class="font-heading font-bold text-lg text-primary">Daftar Siswa & Presensi Kehadiran</h4>
+                        <div id="listSiswaAbsen" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                            <!-- Daftar siswa akan dimuat secara dinamis di sini -->
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitAbsenBtn" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider rounded-2xl transition shadow-lg cursor-pointer text-base">
+                        Simpan Data Absensi
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION / TAB KATALOG EKSKUL -->
+        <section id="content-katalog-ekskul" class="tab-content max-w-6xl mx-auto px-6 scroll-mt-28 hidden">
+            <div class="space-y-10 reveal-element">
+                <div class="text-center space-y-3">
+                    <span class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-xs font-bold tracking-wider uppercase">Direktori & Biaya</span>
+                    <h3 class="font-heading font-extrabold text-3xl sm:text-5xl text-primary">Katalog Ekstrakurikuler Lengkap</h3>
+                    <p class="text-sm sm:text-base text-slate-500">Informasi lengkap kegiatan dan rincian biaya per periode (3 bulan).</p>
+                    <div class="pt-3">
+                        <a href="https://drive.google.com/drive/folders/1mYviYozeOkWj0q5mrKGYO2zQO9oWiSE2" target="_blank" class="inline-flex items-center space-x-2 text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-6 py-3 rounded-2xl transition shadow-sm">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            <span>Buka Folder Google Drive Sumber Katalog</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div class="lg:col-span-4 bg-white p-5 card-custom border border-slate-100 space-y-5">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                            </span>
+                            <input type="text" id="searchKatalog" placeholder="Cari ekstrakurikuler..." onkeyup="filterKatalog()" class="w-full pl-11 pr-4 py-3.5 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                        
+                        <div id="sidebarList" class="space-y-2 max-h-[520px] overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <div class="lg:col-span-8 bg-white p-8 sm:p-10 card-custom border border-slate-100" id="detailKatalogPanel"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FLOATING CONTROLS -->
+    <div class="floating-controls">
+        <a href="https://wa.me/6281944835988" target="_blank" class="w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center float-btn-3d shadow-2xl" title="Hubungi WhatsApp">
+            <i data-lucide="message-circle" class="w-7 h-7"></i>
+        </a>
+        
+        <div class="flex items-center space-x-2 bg-white/90 backdrop-blur-md p-2 rounded-2xl border border-slate-200 float-btn-3d shadow-xl">
+            <button onclick="requestOpenRegistration()" id="btnOpen" class="px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 font-bold rounded-xl transition text-xs">OPEN</button>
+            <button onclick="toggleRegistration(false)" id="btnClose" class="px-4 py-2 bg-rose-600 text-white font-bold rounded-xl transition shadow text-xs">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs sm:text-sm text-slate-400 space-y-4">
+        <div class="flex justify-center space-x-8 font-semibold text-slate-600 text-xs sm:text-sm uppercase tracking-wider">
+            <span>Berilmu</span>
+            <span>•</span>
+            <span>Berakhlak</span>
+            <span>•</span>
+            <span>Berprestasi</span>
+            <span>•</span>
+            <span>Bermanfa'at</span>
+        </div>
+        <p>&copy; 2026 Al-Wildan Islamic School 20 Mataram. All rights reserved.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        const overlay = document.getElementById('page-transition-overlay');
+        let activeNavElement = document.getElementById('nav-home');
+
+        // URL Web App Google Apps Script Terpisah
+        const WEB_APP_URL_PENDAFTARAN = "https://script.google.com/macros/s/AKfycbwJCo9I6INgkA3c7nrwHGiKu37UPHrJsD5EpNU_0LJ_dq-FuQEq5dY6N_RXKzj8w_qkFA/exec";
+        const WEB_APP_URL_ABSENSI = "https://script.google.com/macros/s/AKfycbw37n9iTx-Xxz-7rCBR7Zzf93563e4hoIQWRqMQ-E4OlbyWK6wdBQ0LV1OEsFeMyfow/exec";
+
+        window.addEventListener('load', () => {
+            renderKatalog('Futsal');
+            renderHomeActiveList();
+            toggleRegistration(false);
+        });
+
+        // Saat pilihan Mapel berubah, ambil daftar guru yang mengampu mapel tersebut dari Sheets
+        function onMapelChange() {
+            const mapel = document.getElementById('absenMapel').value;
+            const guruSelect = document.getElementById('absenNamaGuru');
+            const container = document.getElementById('containerDaftarSiswa');
+            
+            container.classList.add('hidden');
+            guruSelect.innerHTML = `<option value="">-- Memuat Guru --</option>`;
+
+            if (!mapel) {
+                guruSelect.innerHTML = `<option value="">-- Pilih Guru Pengampu --</option>`;
+                return;
+            }
+
+            const url = `${WEB_APP_URL_ABSENSI}?action=getGuru&mapel=${encodeURIComponent(mapel)}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    guruSelect.innerHTML = `<option value="">-- Pilih Guru Pengampu --</option>`;
+                    if (data.success && data.guru && data.guru.length > 0) {
+                        data.guru.forEach(namaGuru => {
+                            const opt = document.createElement('option');
+                            opt.value = namaGuru;
+                            opt.textContent = namaGuru;
+                            guruSelect.appendChild(opt);
+                        });
+                    } else {
+                        guruSelect.innerHTML = `<option value="">Tidak ada guru ditemukan</option>`;
+                    }
+                })
+                .catch(err => {
+                    console.error("Gagal memuat data guru:", err);
+                    guruSelect.innerHTML = `<option value="">Gagal memuat data</option>`;
+                });
+        }
+
+        // Tampilkan daftar siswa berdasarkan Mapel & Guru yang dipilih
+        function onMapelOrGuruChange() {
+            const mapel = document.getElementById('absenMapel').value;
+            const guru = document.getElementById('absenNamaGuru').value;
+            const container = document.getElementById('containerDaftarSiswa');
+            const listContainer = document.getElementById('listSiswaAbsen');
+
+            if (!mapel || !guru) {
+                container.classList.add('hidden');
+                listContainer.innerHTML = '';
+                return;
+            }
+
+            container.classList.remove('hidden');
+            listContainer.innerHTML = `<p class="text-xs text-slate-400 italic">Memuat daftar siswa terdaftar...</p>`;
+
+            const url = `${WEB_APP_URL_ABSENSI}?action=getSiswa&mapel=${encodeURIComponent(mapel)}&guru=${encodeURIComponent(guru)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    listContainer.innerHTML = '';
+                    
+                    if (data.success && data.siswa && data.siswa.length > 0) {
+                        data.siswa.forEach((namaSiswa, index) => {
+                            const rowDiv = document.createElement('div');
+                            rowDiv.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl gap-3";
+                            
+                            rowDiv.innerHTML = `
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs font-bold text-slate-500 w-6">${index + 1}.</span>
+                                    <span class="text-sm font-semibold text-slate-700 siswa-nama-item">${namaSiswa}</span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
+                                    <label class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 cursor-pointer border border-emerald-200 hover:bg-emerald-100 transition">
+                                        <input type="radio" name="absen_${index}" value="Hadir" checked class="mr-1 text-emerald-600 focus:ring-emerald-500"> Hadir
+                                    </label>
+                                    <label class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-semibold bg-amber-50 text-amber-700 cursor-pointer border border-amber-200 hover:bg-amber-100 transition">
+                                        <input type="radio" name="absen_${index}" value="Izin" class="mr-1 text-amber-600 focus:ring-amber-500"> Izin
+                                    </label>
+                                    <label class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-semibold bg-sky-50 text-sky-700 cursor-pointer border border-sky-200 hover:bg-sky-100 transition">
+                                        <input type="radio" name="absen_${index}" value="Sakit" class="mr-1 text-sky-600 focus:ring-sky-500"> Sakit
+                                    </label>
+                                    <label class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 cursor-pointer border border-rose-200 hover:bg-rose-100 transition">
+                                        <input type="radio" name="absen_${index}" value="Alpa" class="mr-1 text-rose-600 focus:ring-rose-500"> Alpa
+                                    </label>
+                                </div>
+                            `;
+                            listContainer.appendChild(rowDiv);
+                        });
+                    } else {
+                        listContainer.innerHTML = `<p class="text-xs text-rose-500 font-medium">Belum ada siswa pada sheet ${mapel}_${guru}.</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching siswa:', error);
+                    listContainer.innerHTML = `<p class="text-xs text-rose-500 font-medium">Gagal memuat data siswa.</p>`;
+                });
+        }  
+
+        function switchTab(tabId, event) {
+            if (event) event.preventDefault();
+            
+            const tabs = ['home', 'pendaftaran', 'absensi', 'katalog-ekskul'];
+            
+            overlay.classList.add('active');
+            setTimeout(() => {
+                tabs.forEach(t => {
+                    const el = document.getElementById('content-' + t);
+                    if (el) el.classList.add('hidden');
+                });
+
+                const targetEl = document.getElementById('content-' + tabId);
+                if (targetEl) targetEl.classList.remove('hidden');
+
+                window.scrollTo({ top: 0, behavior: 'auto' });
+
+                const navId = tabId === 'home' ? 'nav-home' : (tabId === 'pendaftaran' ? 'nav-pendaftaran' : (tabId === 'absensi' ? 'nav-absensi' : 'nav-katalog'));
+                const targetNav = document.getElementById(navId);
+
+                navLinks.forEach(link => {
+                    link.classList.remove('text-white');
+                    link.classList.add('text-slate-300');
+                });
+                if (targetNav) {
+                    targetNav.classList.remove('text-slate-300');
+                    targetNav.classList.add('text-white');
+                    activeNavElement = targetNav;
+                }
+
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                }, 300);
+            }, 350);
+        }
+
+        function requestOpenRegistration() {
+            const passwordInput = prompt("Masukkan Sandi untuk Membuka Pendaftaran:");
+            if (passwordInput === "alwildan20") {
+                toggleRegistration(true);
+            } else if (passwordInput !== null) {
+                alert("Sandi salah! Pendaftaran gagal dibuka.");
+            }
+        }
+
+        function toggleRegistration(isOpen) {
+            const fields = [
+                document.getElementById('periode'),
+                document.getElementById('nama'),
+                document.getElementById('kelas'),
+                document.getElementById('whatsapp'),
+                document.getElementById('buktiBayar')
+            ];
+            
+            const checkboxes = document.querySelectorAll('input[name="ekskul"]');
+            const checkboxContainer = document.getElementById('ekskulCheckboxContainer');
+            const submitBtn = document.getElementById('submitBtn');
+            const statusBanner = document.getElementById('statusBanner');
+            const statusText = document.getElementById('statusText');
+            const btnOpen = document.getElementById('btnOpen');
+            const btnClose = document.getElementById('btnClose');
+
+            if (isOpen) {
+                fields.forEach(f => {
+                    if(f) {
+                        f.disabled = false;
+                        f.classList.remove('bg-slate-100', 'cursor-not-allowed', 'text-slate-400');
+                        f.classList.add('bg-white');
+                    }
+                });
+                checkboxes.forEach(cb => cb.disabled = false);
+                if(checkboxContainer) {
+                    checkboxContainer.classList.remove('pointer-events-none', 'opacity-60', 'bg-slate-100');
+                    checkboxContainer.classList.add('bg-slate-50');
+                }
+
+                if(submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "w-full py-4 bg-primary hover:bg-blue-900 text-white font-bold uppercase tracking-wider rounded-2xl transition shadow-lg cursor-pointer text-base";
+                    submitBtn.innerText = "Kirim Pendaftaran";
+                }
+
+                if(statusBanner) {
+                    statusBanner.className = "mt-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-bold flex items-center justify-center space-x-2";
+                    statusText.innerText = "Pendaftaran Sedang Dibuka (Silakan Isi Formulir)";
+                }
+                
+                if(btnOpen) btnOpen.className = "px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl transition shadow text-xs";
+                if(btnClose) btnClose.className = "px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold rounded-xl transition text-xs";
+            } else {
+                fields.forEach(f => {
+                    if(f) {
+                        f.disabled = true;
+                        f.classList.add('bg-slate-100', 'cursor-not-allowed');
+                        f.classList.remove('bg-white');
+                    }
+                });
+                checkboxes.forEach(cb => cb.disabled = true);
+                if(checkboxContainer) {
+                    checkboxContainer.classList.add('pointer-events-none', 'opacity-60', 'bg-slate-100');
+                    checkboxContainer.classList.remove('bg-slate-50');
+                }
+
+                if(submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "w-full py-4 bg-slate-300 text-slate-500 font-bold uppercase tracking-wider rounded-2xl transition cursor-not-allowed shadow-none text-base";
+                    submitBtn.innerText = "Pendaftaran Ditutup";
+                }
+
+                if(statusBanner) {
+                    statusBanner.className = "mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm font-bold flex items-center justify-center space-x-2";
+                    statusText.innerText = "Pendaftaran Sedang Ditutup (Periode Belum Dibuka)";
+                }
+
+                if(btnOpen) btnOpen.className = "px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 font-bold rounded-xl transition text-xs";
+                if(btnClose) btnClose.className = "px-4 py-2 bg-rose-600 text-white font-bold rounded-xl transition shadow text-xs";
+            }
+        }
+
+        const revealElements = document.querySelectorAll('.reveal-element');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        revealElements.forEach((el, index) => {
+            el.style.transitionDelay = `${index * 80}ms`;
+            revealObserver.observe(el);
+        });
+
+        const katalogData = [
+            {
+                name: "Futsal",
+                icon: "⚽",
+                price: "Rp600.000",
+                image: "futsal.JPEG", 
+                desc: "Ekstrakurikuler futsal membimbing siswa dalam menguasai teknik permainan secara mendalam, strategi tim, kerja sama, serta membangun ketahanan fisik dan kedisiplinan di lapangan.",
+                highlights: ["Teknik dasar & dribbling", "Strategi formasi tim", "Ketahanan fisik & stamina"],
+                coaches: [
+                    "Muhamad Zaenul Husna (Coach genta) - Pelatih kepala",
+                    "Faeruzzaki (Coach feru) - Kelas SMP SMA",
+                    "L Diki Saputra (Coach Diki) - Kelas 8,9 SMP"
+                ],
+                schedule: "Rabu | 16.30 - 17.45 (SMP-SMA)"
+            },
+            {
+                name: "Basket",
+                icon: "🏀",
+                price: "Rp525.000",
+                image: "basket.JPEG",
+                desc: "Melatih keterampilan fundamental bola basket seperti dribbling, passing, shooting, serta taktik permainan kelompok untuk mencetak generasi atlet yang tangguh dan sportif.",
+                highlights: ["Dribbling & shooting akurat", "Kerja sama tim", "Sportivitas & kedisiplinan"],
+                coaches: ["Muhammad Fathan - Coach Senior", "Syafruddin Prawira - Coach Junior"],
+                schedule: "Senin | 16.30 - 17.45"
+            },
+            {
+                name: "Badminton",
+                icon: "🏸",
+                price: "Rp750.000",
+                image: "badminton.JPEG",
+                desc: "Program pembinaan bulu tangkis yang berfokus pada penguasaan teknik pukulan yang akurat, kelincahan kaki (footwork), kecepatan reaksi, serta stamina fisik optimal.",
+                highlights: ["Footwork & kelincahan", "Teknik smash & lob", "Stamina fisik optimal"],
+                coaches: ["Tim Pelatih Profesional Badminton"],
+                schedule: "Sabtu | 08.00 - 10.00"
+            },
+            {
+                name: "Archery",
+                icon: "🎯",
+                price: "Rp525.000",
+                image: "archery.JPEG",
+                desc: "Olahraga sunnah memanah yang melatih konsentrasi tinggi, ketenangan mental, kestabilan emosi, serta koordinasi kekuatan fisik yang prima.",
+                highlights: ["Fokus & konsentrasi", "Ketenangan mental", "Koordinasi & postur tubuh"],
+                coaches: ["Ustadz Abu Muhammad"],
+                schedule: "Selasa | 16.30 - 17.45"
+            },
+            {
+                name: "Taekwondo",
+                icon: "🥋",
+                price: "Rp600.000",
+                image: "taekwondo.JPEG",
+                desc: "Seni bela diri asal Korea yang menanamkan nilai disiplin, teknik tendangan dan tangkisan yang terstruktur, serta pembentukan mental bela diri yang tangguh.",
+                highlights: ["Disiplin & mental tangguh", "Teknik tendangan dasar", "Pertahanan diri"],
+                coaches: ["Jayadi, S.Pd - Kepala Pelatih", "Jihad, S.Pd - Pelatih Putra"],
+                schedule: "Sabtu | 16.30 - 17.45"
+            },
+            {
+                name: "Arabic",
+                icon: "🗣️",
+                price: "Rp525.000",
+                image: "arabic.JPEG",
+                desc: "Program pengembangan kemampuan berbahasa Arab yang mencakup maharoh kalam (percakapan), qira'ah, pemahaman kaidah, dan pengayaan kosakata aplikatif sehari-hari.",
+                highlights: ["Maharoh kalam", "Kosakata harian islami", "Percakapan dasar"],
+                coaches: ["Ustadz Muhammad Bages, Lc", "Ustadz Ammar Abdurrahman, S.Ag"],
+                schedule: "Selasa | 16.30 - 17.45"
+            },
+            {
+                name: "English",
+                icon: "🔤",
+                price: "Rp525.000",
+                image: "english.JPEG",
+                desc: "Klub bahasa Inggris interaktif yang melatih keterampilan berbicara di muka umum (public speaking), listening, dan perluasan kosa kata melalui pendekatan permainan edukatif.",
+                highlights: ["Public speaking", "Interactive listening", "English vocabulary games"],
+                coaches: ["Ustadz Amir", "Miss Jihan", "Miss Pebi"],
+                schedule: "Kamis | 16.30 - 17.45"
+            },
+            {
+                name: "Math",
+                icon: "➕",
+                price: "Rp525.000",
+                image: "math.JPEG",
+                desc: "Pembinaan khusus olimpiade matematika, penguasaan trik berhitung cepat, serta latihan pemecahan soal logika tingkat lanjut untuk mengasah ketajaman berpikir analitis.",
+                highlights: ["Berhitung cepat & logika", "Persiapan olimpiade", "Analisis pemecahan masalah"],
+                coaches: ["Bela Zainun Yatin, S.Mat", "Syifa Sabriyani, S.Pd"],
+                schedule: "Jum'at | 11.00 - 12.00"
+            },
+            {
+                name: "Research and Sains",
+                icon: "🔬",
+                price: "Rp525.000",
+                image: "research-sains.JPEG",
+                desc: "Wadah bagi siswa untuk melakukan eksperimen sains di laboratorium, mempelajari metode penelitian ilmiah, serta merancang proyek inovasi berbasis teknologi sederhana.",
+                highlights: ["Eksperimen laboratorium", "Metode ilmiah", "Proyek inovasi sains"],
+                coaches: ["Ustadz Muhammad Sani"],
+                schedule: "Jum'at | 16.30 - 17.45"
+            },
+            {
+                name: "Multimedia",
+                icon: "💻",
+                price: "Rp525.000",
+                image: "multimedia.JPEG",
+                desc: "Ekstrakurikuler teknologi digital yang membekali siswa dengan keterampilan desain grafis, videografi, teknik editing video profesional, serta produksi konten digital islami.",
+                highlights: ["Desain grafis dasar", "Video editing", "Pembuatan konten kreatif"],
+                coaches: ["Ustadz Anwar Effendi", "Ustadz Faqih"],
+                schedule: "Rabu & Jum'at"
+            },
+            {
+                name: "Merajut",
+                icon: "🧶",
+                price: "Rp525.000",
+                image: "merajut.JPEG",
+                desc: "Mengembangkan keterampilan seni kriya tangan melalui teknik merajut, melatih kesabaran, ketelitian tingkat tinggi, serta menghasilkan produk kerajinan bernilai estetika.",
+                highlights: ["Melatih kesabaran & teliti", "Seni kriya tangan", "Produk kerajinan estetis"],
+                coaches: ["Umi Nanik Qomariyah"],
+                schedule: "Selasa | 16.30 - 17.45"
+            },
+            {
+                name: "Robotic",
+                icon: "🤖",
+                price: "Rp525.000",
+                image: "robotic.JPEG",
+                desc: "Pengenalan dunia teknik robotika modern, mulai dari perakitan perangkat keras (hardware) dasar hingga dasar-dasar pemrograman logika pergerakan robot.",
+                highlights: ["Perakitan hardware dasar", "Logika pemrograman", "Kreativitas teknik mekanik"],
+                coaches: ["Zidan", "Yama", "Fandi"],
+                schedule: "Sabtu | 08.00 - 10.00"
+            },
+            {
+                name: "Ashabul Qur'an",
+                icon: "📖",
+                price: "Rp525.000",
+                image: "al-qur'an.JPEG",
+                desc: "Ekstrakurikuler Tahfidz Club yang membimbing siswa dalam menghafal dan memahami Al-Qur'an secara mendalam, perbaikan tahsin, serta persiapan mengikuti musabaqah hafalan.",
+                highlights: ["Tahfidz & Tahsin", "Setoran hafalan terstruktur", "Persiapan musabaqah"],
+                coaches: ["Ustadz Fadhil", "Ustadzah Nurbaitillah", "Ustadz Ulumuddin"],
+                schedule: "Senin | 16.30 - 17.45"
+            }
+        ];
+
+        function renderHomeActiveList() {
+            const container = document.getElementById('homeActiveList');
+            if(!container) return;
+            container.innerHTML = '';
+            katalogData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-6 rounded-2xl border border-slate-100 card-custom space-y-4 flex flex-col justify-between';
+                card.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <span class="text-3xl p-3 bg-slate-50 rounded-2xl">${item.icon}</span>
+                        <div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full uppercase">Aktif</span>
+                            <h4 class="font-heading font-extrabold text-base sm:text-lg text-primary mt-1.5">${item.name}</h4>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600 line-clamp-2">${item.desc}</p>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-sm font-bold text-primary">${item.price}</span>
+                        <button onclick="switchTab('katalog-ekskul', event); renderKatalog('${item.name}');" class="text-xs sm:text-sm font-bold text-sky-600 hover:text-sky-700 flex items-center space-x-1.5 cursor-pointer">
+                            <span>Detail</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function renderSidebar(filteredData) {
+            const sidebarList = document.getElementById('sidebarList');
+            if(!sidebarList) return;
+            sidebarList.innerHTML = '';
+
+            filteredData.forEach(item => {
+                const isActive = currentActiveName === item.name;
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-5 py-3.5 rounded-2xl text-xs sm:text-sm font-semibold transition flex items-center justify-between cursor-pointer ${
+                    isActive ? 'bg-primary text-white shadow-lg' : 'text-slate-600 hover:bg-slate-100'
+                }`;
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3.5">
+                        <span class="text-lg">${item.icon}</span>
+                        <span>${item.name}</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-70"></i>
+                `;
+                btn.onclick = () => {
+                    currentActiveName = item.name;
+                    renderSidebar(filteredData);
+                    renderDetail(item);
+                };
+                sidebarList.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        let currentActiveName = 'Futsal';
+
+        function renderKatalog(name) {
+            const found = katalogData.find(i => i.name === name);
+            if (found) {
+                currentActiveName = found.name;
+                renderSidebar(katalogData);
+                renderDetail(found);
+            }
+        }
+
+        function renderDetail(item) {
+            const panel = document.getElementById('detailKatalogPanel');
+            if(!panel) return;
+            
+            let highlightsHtml = item.highlights.map(h => `
+                <div class="flex items-center space-x-2.5 bg-slate-50 border border-slate-100 p-3 rounded-2xl">
+                    <div class="w-5 h-5 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <span class="text-xs sm:text-sm font-medium text-slate-700">${h}</span>
+                </div>
+            `).join('');
+
+            let coachesHtml = item.coaches.map(c => `
+                <div class="flex items-start space-x-2.5 bg-blue-50/50 border border-blue-100/60 p-3 rounded-2xl">
+                    <div class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <span class="text-xs sm:text-sm font-medium text-slate-700">${c}</span>
+                </div>
+            `).join('');
+
+            panel.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-5">
+                        <div class="relative rounded-2xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] bg-slate-100">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 space-y-5">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-wider">Aktif</span>
+                                <h4 class="font-heading font-extrabold text-2xl sm:text-3xl text-primary mt-2">${item.name}</h4>
+                            </div>
+                        </div>
+
+                        <p class="text-sm sm:text-base text-slate-600 leading-relaxed">${item.desc}</p>
+
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-slate-400 block font-medium uppercase tracking-wider">Biaya Pembinaan</span>
+                                <span class="text-lg sm:text-xl font-extrabold text-emerald-600">${item.price}</span>
+                                <span class="text-xs text-slate-500">/periode (3 bulan)</span>
+                            </div>
+                            <button onclick="switchTab('pendaftaran', event)" class="px-5 py-3 bg-primary hover:bg-blue-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-2xl transition shadow-lg flex items-center space-x-2 cursor-pointer">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                <span>Daftar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100 space-y-4">
+                    <h5 class="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Poin Pembelajaran Utama</h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                        ${highlightsHtml}
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100 space-y-4">
+                    <h5 class="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-2">
+                        <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
+                        <span>Nama Pengampu / Pelatih</span>
+                    </h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        ${coachesHtml}
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100 space-y-3">
+                    <h5 class="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-2">
+                        <i data-lucide="calendar" class="w-4 h-4 text-sky-600"></i>
+                        <span>Jadwal Kegiatan</span>
+                    </h5>
+                    <div class="bg-sky-50/60 border border-sky-100 p-4 rounded-2xl flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center flex-shrink-0 font-bold text-sm shadow-md">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xs sm:text-sm font-bold text-sky-900">${item.schedule}</span>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function filterKatalog() {
+            const queryInput = document.getElementById('searchKatalog');
+            if(!queryInput) return;
+            const query = queryInput.value.toLowerCase();
+            const filtered = katalogData.filter(i => i.name.toLowerCase().includes(query));
+            renderSidebar(filtered);
+        }
+
+        renderSidebar(katalogData);
+        renderDetail(katalogData[0]);
+
+        // Fungsi Kirim Data Pendaftaran
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "MENYIMPAN DATA & UPLOAD...";
+            btn.disabled = true;
+
+            const selectedEkskul = [];
+            document.querySelectorAll('input[name="ekskul"]:checked').forEach((checkbox) => {
+                selectedEkskul.push(checkbox.value);
+            });
+
+            if (selectedEkskul.length === 0) {
+                alert('Silakan pilih minimal 1 ekstrakurikuler!');
+                btn.innerText = "Kirim Pendaftaran";
+                btn.disabled = false;
+                return;
+            }
+
+            const fileInput = document.getElementById('buktiBayar');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function () {
+                    const payload = {
+                        type: "pendaftaran",
+                        periode: document.getElementById('periode').value,
+                        nama: document.getElementById('nama').value,
+                        kelas: document.getElementById('kelas').value,
+                        ekskul: selectedEkskul.join(', '),
+                        whatsapp: document.getElementById('whatsapp').value,
+                        fileName: file.name,
+                        fileType: file.type,
+                        fileData: reader.result
+                    };
+                    
+                    fetch(WEB_APP_URL_PENDAFTARAN, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    }).then(() => {
+                        alert('Pendaftaran berhasil disimpan!');
+                        document.getElementById('exkulForm').reset();
+                        btn.innerText = "Kirim Pendaftaran";
+                        btn.disabled = false;
+                    }).catch(err => {
+                        alert('Terjadi kesalahan: ' + err);
+                        btn.innerText = "Kirim Pendaftaran";
+                        btn.disabled = false;
+                    });
+                };
+            }
+        }
+
+        // Handler Kirim Absensi Guru
+        function handleAbsensiSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitAbsenBtn');
+            btn.innerText = "MENYIMPAN ABSENSI...";
+            btn.disabled = true;
+
+            const mapel = document.getElementById('absenMapel').value;
+            const namaGuru = document.getElementById('absenNamaGuru').value;
+            const pertemuan = document.getElementById('absenPertemuan').value;
+
+            const detailAbsen = [];
+            const rows = document.querySelectorAll('#listSiswaAbsen > div');
+            
+            rows.forEach((row, index) => {
+                const namaSiswa = row.querySelector('.siswa-nama-item').innerText;
+                const selectedStatus = row.querySelector(`input[name="absen_${index}"]:checked`).value;
+                
+                detailAbsen.push({
+                    nama: namaSiswa,
+                    status: selectedStatus
+                });
+            });
+
+            if (detailAbsen.length === 0) {
+                alert('Tidak ada data siswa untuk diabsen!');
+                btn.innerText = "Simpan Data Absensi";
+                btn.disabled = false;
+                return;
+            }
+
+            const payload = {
+                type: "absensi",
+                mapel: mapel,
+                namaGuru: namaGuru,
+                pertemuan: pertemuan,
+                detailAbsen: detailAbsen
+            };
+
+            fetch(WEB_APP_URL_ABSENSI, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert('Data absensi berhasil disimpan dan disinkronkan ke sheet absensi!');
+                document.getElementById('absensiForm').reset();
+                document.getElementById('containerDaftarSiswa').classList.add('hidden');
+                btn.innerText = "Simpan Data Absensi";
+                btn.disabled = false;
+            }).catch(err => {
+                alert('Terjadi kesalahan: ' + err);
+                btn.innerText = "Simpan Data Absensi";
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
